@@ -7,7 +7,11 @@ export default function Home() {
 
   const handleLogin = () => {
     if (!deviceId) return;
-    window.location.href = `/auth/login?deviceId=${deviceId}`;
+
+    // ✅ Send deviceId + returnTo
+    document.cookie = `deviceId=${deviceId}; path=/; max-age=300;`;
+
+    window.location.href = `/auth/login?returnTo=/api/device/validate`;
   };
 
   const handleLogout = () => {
@@ -16,12 +20,11 @@ export default function Home() {
   };
 
   return (
-    <div className="flex gap-3 p-4">
-      
+    <div className="flex gap-4 p-4">
       <button
         onClick={handleLogin}
         disabled={!deviceId}
-        className="bg-blue-500 text-white px-4 py-2 rounded-md disabled:opacity-50 cursor-pointer"
+        className="bg-blue-500 text-white px-4 py-2 rounded-md disabled:opacity-50"
       >
         Login
       </button>
@@ -29,11 +32,10 @@ export default function Home() {
       <button
         onClick={handleLogout}
         disabled={!deviceId}
-        className="bg-red-500 text-white px-4 py-2 rounded-md disabled:opacity-50 cursor-pointer"
+        className="bg-red-500 text-white px-4 py-2 rounded-md disabled:opacity-50"
       >
         Logout
       </button>
-
     </div>
   );
 }
