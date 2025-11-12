@@ -1,41 +1,51 @@
 "use client";
 
-import { useDeviceId } from "@/app/hooks/useDeviceId";
+import { useEffect, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import gsap from "gsap";
+import { useDeviceId } from "./hooks/useDeviceId";
 
 export default function Home() {
+  const containerRef = useRef(null);
   const deviceId = useDeviceId();
+
+  useEffect(() => {
+    gsap.from(containerRef.current, {
+      opacity: 0,
+      y: 40,
+      duration: 0.6,
+      ease: "power2.out",
+    });
+  }, []);
 
   const handleLogin = () => {
     if (!deviceId) return;
-
-    // ✅ Send deviceId + returnTo
+  
+    // ✅ Save deviceId in a cookie (5 minutes expiry)
     document.cookie = `deviceId=${deviceId}; path=/; max-age=300;`;
-
+  
+    // ✅ Continue login
     window.location.href = `/auth/login?returnTo=/api/device/validate`;
   };
-
-  const handleLogout = () => {
-    if (!deviceId) return;
-    window.location.href = `/auth/logout?deviceId=${deviceId}`;
-  };
+  
 
   return (
-    <div className="flex gap-4 p-4">
-      <button
+    <div ref={containerRef} className="min-h-screen flex flex-col items-center justify-center bg-linear-to-br from-zinc-900 to-black">
+      <h1 className="text-4xl font-bold text-white mb-4">
+        Welcome to the App
+      </h1>
+
+      <p className="text-gray-300 mb-8">
+        Login to access your dashboard.
+      </p>
+
+      <Button 
         onClick={handleLogin}
         disabled={!deviceId}
-        className="bg-blue-500 text-white px-4 py-2 rounded-md disabled:opacity-50"
+        className="px-6 py-3 text-lg"
       >
         Login
-      </button>
-
-      <button
-        onClick={handleLogout}
-        disabled={!deviceId}
-        className="bg-red-500 text-white px-4 py-2 rounded-md disabled:opacity-50"
-      >
-        Logout
-      </button>
+      </Button>
     </div>
   );
 }

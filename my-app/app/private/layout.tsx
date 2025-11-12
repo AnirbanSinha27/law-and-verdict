@@ -7,38 +7,34 @@ import { useDeviceId } from "@/app/hooks/useDeviceId";
 export default function PrivateLayout({ children }: { children: React.ReactNode }) {
   const deviceId = useDeviceId();
 
+  // 🔗 Register socket with deviceId
   useEffect(() => {
     if (!deviceId) return;
 
-    // ✅ Tell backend what device this socket belongs to
     socket.emit("register_device", { deviceId });
 
-    console.log("📡 Sent register_device:", deviceId);
   }, [deviceId]);
 
-  // ✅ Listen for force_logout event
+
+  // 🔴 Listen for forced logout
   useEffect(() => {
-    socket.on("force_logout", (data) => {
-      alert(data.message || "You were logged out from another device.");
+    const handler = (data: any) => {
+      console.warn("🚨 Forced logout event received:", data);
+
+      // Optional: show a popup message
+      alert(data?.message || "You were logged out because another device replaced your session.");
+
+      // Trigger Auth0 logout
       window.location.href = "/auth/logout";
-    });
+    };
+
+    socket.on("force_logout", handler);
 
     return () => {
-      socket.off("force_logout");
+      socket.off("force_logout", handler);
     };
   }, []);
 
-  useEffect(() => {
-    socket.on("force_logout", () => {
-      alert("You were logged out because another device replaced your session.");
-      window.location.href = "/auth/logout";
-    });
-  
-    return () => {
-      socket.off("force_logout");
-    };
-  }, []);
-  
 
   return <>{children}</>;
 }
