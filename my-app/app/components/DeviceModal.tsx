@@ -82,6 +82,7 @@ export default function DeviceModal() {
                   size="sm"
                   variant="destructive"
                   onClick={() => handleForceLogout(d.deviceId)}
+                  className="cursor-pointer"
                 >
                   Force Logout
                 </Button>

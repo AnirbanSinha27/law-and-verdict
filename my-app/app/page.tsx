@@ -1,51 +1,54 @@
-"use client";
+'use client'
 
-import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import gsap from "gsap";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useDeviceId } from "./hooks/useDeviceId";
+import { LogIn } from "lucide-react";
 
-export default function Home() {
-  const containerRef = useRef(null);
+export default function Home(){
   const deviceId = useDeviceId();
-
-  useEffect(() => {
-    gsap.from(containerRef.current, {
-      opacity: 0,
-      y: 40,
-      duration: 0.6,
-      ease: "power2.out",
-    });
-  }, []);
 
   const handleLogin = () => {
     if (!deviceId) return;
   
-    // ✅ Save deviceId in a cookie (5 minutes expiry)
+    // Save deviceId in a cookie (5 minutes expiry)
     document.cookie = `deviceId=${deviceId}; path=/; max-age=300;`;
   
-    // ✅ Continue login
+    // Continue login
     window.location.href = `/auth/login?returnTo=/api/device/validate`;
   };
-  
 
   return (
-    <div ref={containerRef} className="min-h-screen flex flex-col items-center justify-center bg-linear-to-br from-zinc-900 to-black">
-      <h1 className="text-4xl font-bold text-white mb-4">
-        Welcome to the App
-      </h1>
-
-      <p className="text-gray-300 mb-8">
-        Login to access your dashboard.
-      </p>
-
-      <Button 
-        onClick={handleLogin}
-        disabled={!deviceId}
-        className="px-6 py-3 text-lg"
-      >
-        Login
-      </Button>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-zinc-950 p-4">
+      <Card className="w-full max-w-md bg-zinc-900 border-zinc-800 text-white shadow-xl">
+        <CardHeader className="space-y-2 text-center">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-500/10">
+            <LogIn className="h-8 w-8 text-blue-500" />
+          </div>
+          <CardTitle className="text-3xl font-bold tracking-tight text-white">
+            Welcome Back
+          </CardTitle>
+          <CardDescription className="text-base text-zinc-400">
+            Sign in to access your dashboard
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <Button 
+            onClick={handleLogin}
+            disabled={!deviceId}
+            className="cursor-pointer w-full h-11 text-base font-medium bg-blue-600 hover:bg-blue-700 text-white"
+            size="lg"
+          >
+            <LogIn className="mr-2 h-5 w-5" />
+            Sign In
+          </Button>
+          
+          <p className="text-center text-sm text-zinc-500">
+            Secure authentication powered by your device
+          </p>
+        </CardContent>
+      </Card>
     </div>
   );
-}
+};
+
