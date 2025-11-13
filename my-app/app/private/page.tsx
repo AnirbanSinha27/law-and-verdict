@@ -15,6 +15,22 @@ export default function PrivatePage() {
   const router = useRouter();
 const [phone, setPhone] = useState(null);
 
+useEffect(() => {
+  if (!window.socket) return;
+
+  const handleForceLogout = () => {
+    alert("You were logged out because your session was terminated from another device.");
+    window.location.href = "/auth/logout";
+  };
+
+  window.socket.on("force_logout", handleForceLogout);
+
+  return () => {
+    if (window.socket) {
+      window.socket.off("force_logout", handleForceLogout);
+    }
+  };
+}, []);
 
 // ✅ Fetch phone number
 useEffect(() => {
@@ -65,23 +81,6 @@ useEffect(() => {
       </div>
     );
   }
-
-  useEffect(() => {
-    if (!window.socket) return;
-  
-    const handleForceLogout = () => {
-      alert("You were logged out because your session was terminated from another device.");
-      window.location.href = "/auth/logout";
-    };
-  
-    window.socket.on("force_logout", handleForceLogout);
-  
-    return () => {
-      if (window.socket) {
-        window.socket.off("force_logout", handleForceLogout);
-      }
-    };
-  }, []);
   
 
   return (

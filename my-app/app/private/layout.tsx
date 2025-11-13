@@ -20,10 +20,6 @@ export default function PrivateLayout({ children }: { children: React.ReactNode 
   useEffect(() => {
     const handler = (data: any) => {
       console.warn("🚨 Forced logout event received:", data);
-
-      // Optional: show a popup message
-      alert(data?.message || "You were logged out because another device replaced your session.");
-
       // Trigger Auth0 logout
       window.location.href = "/auth/logout";
     };
