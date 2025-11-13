@@ -1,14 +1,14 @@
 "use client";
 
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
-export default function AuthCallbackPage() {
+function AuthCallbackContent() {
   const params = useSearchParams();
   const router = useRouter();
 
   useEffect(() => {
-    const deviceId = params.get("deviceId");
+    const deviceId = params?.get("deviceId");
 
     if (deviceId) {
       router.replace(`/api/device/validate?deviceId=${deviceId}`);
@@ -16,4 +16,12 @@ export default function AuthCallbackPage() {
   }, [params, router]);
 
   return <p>Signing you in...</p>;
+}
+
+export default function AuthCallbackPage() {
+  return (
+    <Suspense fallback={<p>Signing you in...</p>}>
+      <AuthCallbackContent />
+    </Suspense>
+  );
 }

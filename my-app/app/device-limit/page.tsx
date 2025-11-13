@@ -1,13 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
-export default function DeviceLimitPage() {
+type DeviceInfo = {
+  deviceId: string;
+  userAgent: string;
+  createdAt: string;
+};
+
+function DeviceLimitContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [devices, setDevices] = useState<any[]>([]);
+  const [devices, setDevices] = useState<DeviceInfo[]>([]);
   const userId = searchParams?.get("userId") ?? null;
 
   useEffect(() => {
@@ -48,7 +54,7 @@ export default function DeviceLimitPage() {
       <div className="bg-zinc-800 p-8 rounded-xl w-[400px] text-center">
         <h1 className="text-2xl font-bold mb-4">Device Limit Reached</h1>
         <p className="text-gray-400 mb-6">
-          You have already logged in on 3 devices.  
+          You have already logged in on 3 devices.
           Choose one device to logout and continue:
         </p>
 
@@ -76,5 +82,13 @@ export default function DeviceLimitPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function DeviceLimitPage() {
+  return (
+    <Suspense fallback={<p className="text-white p-8">Loading device details…</p>}>
+      <DeviceLimitContent />
+    </Suspense>
   );
 }
