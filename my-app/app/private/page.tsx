@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import gsap from "gsap";
 import { useEffect, useRef,useState } from "react";
 import { Button } from "@/components/ui/button";
+import DeviceModal from "../components/DeviceModal";
 
 export default function PrivatePage() {
   const { user, error, isLoading } = useUser();
@@ -57,6 +58,7 @@ useEffect(() => {
           Welcome, {user.name}
         </h1>
 
+
         {/* Profile Card */}
         <div className="bg-zinc-800/60 backdrop-blur-xl p-6 rounded-xl mb-6 border border-white/10">
           <h2 className="text-2xl font-semibold mb-4">Your Profile</h2>
@@ -76,14 +78,22 @@ useEffect(() => {
 
           </div>
         </div>
-
+        <div>
         <Button
           onClick={() => window.dispatchEvent(new CustomEvent("open-device-modal"))}
           className="px-6 py-3 text-lg"
         >
           Manage Devices
         </Button>
+        <Button
+          onClick={() => window.location.href = "/auth/logout"}
+          className="mt-4 bg-red-600 hover:bg-red-800"
+        >
+          Logout
+        </Button>
+        </div>
       </div>
+      <DeviceModal/>
     </div>
   );
 }

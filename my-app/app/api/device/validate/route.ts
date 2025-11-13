@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth0 } from "@/libauth/auth0";
 import { connectToDatabase } from "@/dblib/mongodb";
 import UserDevice from "@/dblib/models/UserDevice";
+export const runtime = "nodejs";   // ✅ force Node runtime
 
 export async function GET(request: NextRequest) {
   await connectToDatabase();
@@ -44,15 +45,7 @@ export async function GET(request: NextRequest) {
   }
 
   // ❌ Device limit reached
-  return NextResponse.json(
-    {
-      status: "limit_reached",
-      devices: devices.map(d => ({
-        deviceId: d.deviceId,
-        userAgent: d.userAgent,
-        createdAt: d.createdAt,
-      })),
-    },
-    { status: 403 }
-  );
+  const url = new URL(`/device-limit?userId=${userId}`, request.url);
+  return NextResponse.redirect(url);
+
 }
