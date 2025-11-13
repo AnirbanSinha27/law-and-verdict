@@ -1,6 +1,6 @@
 "use client";
 
-import { useUser } from "@auth0/nextjs-auth0/client";
+import { useUser } from "@auth0/nextjs-auth0/client"; 
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ export default function PrivatePage() {
 
   const router = useRouter();
 const [phone, setPhone] = useState(null);
+
 
 // ✅ Fetch phone number
 useEffect(() => {
@@ -34,19 +35,6 @@ useEffect(() => {
 
   loadPhone();
 }, []);
-
-  useEffect(() => {
-    const clearDialogArtifacts = () => {
-      document
-        .querySelectorAll("[data-overlay], [data-radix-dialog-overlay], [role='dialog']")
-        .forEach((el) => el.remove());
-      document.body.style.removeProperty("overflow");
-    };
-
-    clearDialogArtifacts();
-
-    return clearDialogArtifacts;
-  }, []);
 
 
   useEffect(() => {
@@ -77,6 +65,24 @@ useEffect(() => {
       </div>
     );
   }
+
+  useEffect(() => {
+    if (!window.socket) return;
+  
+    const handleForceLogout = () => {
+      alert("You were logged out because your session was terminated from another device.");
+      window.location.href = "/auth/logout";
+    };
+  
+    window.socket.on("force_logout", handleForceLogout);
+  
+    return () => {
+      if (window.socket) {
+        window.socket.off("force_logout", handleForceLogout);
+      }
+    };
+  }, []);
+  
 
   return (
     <div className="min-h-screen bg-zinc-950 p-4 md:p-8">
